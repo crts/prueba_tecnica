@@ -14,17 +14,23 @@ class GastoList(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        gastos = Gasto.objects.all()
-        serializer = GastoSerializer(gastos, many=True)
-        return Response(serializer.data)
-
+        try:
+            gastos = Gasto.objects.all()
+            serializer = GastoSerializer(gastos, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            print(e)
+            return Response(status=500)
     def post(self, request):
-        serializer = GastoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-
+        try:
+            serializer = GastoSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            print(e)
+            return Response(status=500)
 class GastoDetail(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -36,6 +42,9 @@ class GastoDetail(APIView):
             return Response(serializer.data)
         except Gasto.DoesNotExist:
             return Response(status=404)
+        except Exception as e:
+            print(e)
+            return Response(status=500)
 
     def put(self, request, pk):
         try:
@@ -47,6 +56,9 @@ class GastoDetail(APIView):
             return Response(serializer.errors, status=400)
         except Gasto.DoesNotExist:
             return Response(status=404)
+        except Exception as e:
+            print(e)
+            return Response(status=500)
 
     def delete(self, request, pk):
         try:
@@ -55,5 +67,8 @@ class GastoDetail(APIView):
             return Response(status=204)
         except Gasto.DoesNotExist:
             return Response(status=404)
+        except Exception as e:
+            print(e)
+            return Response(status=500)
 
 
